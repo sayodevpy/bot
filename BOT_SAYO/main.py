@@ -3,27 +3,27 @@ from discord.ext import commands
 import json
 import os
 
-# Définition du chemin du fichier de configuration
+# Définition du dossier où se trouve le script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Définition des chemins des fichiers
 CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
 REPS_PATH = os.path.join(BASE_DIR, "reps.json")
 
+# Charger les reps (crée le fichier s'il n'existe pas)
+if not os.path.exists(REPS_PATH):
+    with open(REPS_PATH, "w") as f:
+        json.dump({}, f)
 
-# Chargement des données
-try:
-    with open(REPS_PATH, "r") as f:
-        reps = json.load(f)
-except FileNotFoundError:
-    reps = {}
+with open(REPS_PATH, "r") as f:
+    reps = json.load(f)
 
-# Chargement du token depuis config.json
-try:
-    with open(CONFIG_PATH, "r") as f:
-        config = json.load(f)
-    TOKEN = config["TOKEN"]
-except FileNotFoundError:
-    print("❌ Fichier config.json introuvable ! Assurez-vous qu'il est dans BOT SAYO.")
+# Charger le token depuis Railway (Variable d'Environnement)
+TOKEN = os.getenv("DISCORD_TOKEN")
+if not TOKEN:
+    print("❌ Erreur : Le token n'est pas défini dans les variables d'environnement.")
     exit()
+
 
 intents = discord.Intents.default()
 intents.message_content = True
